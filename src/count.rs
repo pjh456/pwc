@@ -31,6 +31,8 @@ pub fn count<R: BufRead>(reader: &mut R) -> io::Result<Stats> {
         if let Ok(s) = std::str::from_utf8(&buf) {
             stats.chars += s.chars().count() as u64;
         }
+
+        stats.max_line_len = stats.max_line_len.max(n as u64);
     }
 
     Ok(stats)
