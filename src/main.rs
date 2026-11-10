@@ -1,5 +1,5 @@
 use anyhow::Result;
-use pwc::cli::Cli;
+use pwc::cli::{Cli, TotalWhen};
 use pwc::count::count;
 use pwc::output::print_results;
 use pwc::{Label, Row, Stats};
@@ -23,15 +23,23 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
         label: Label::Total,
     };
     let mut rows = Vec::new();
-    let multi = cli.inputs().len() > 1;
+
+    let print_total = match cli.total {
+        TotalWhen::Auto => inputs.len() > 1,
+        TotalWhen::Always | TotalWhen::Only => true,
+        TotalWhen::Never => false,
+    };
 
     for input in inputs {
         let row = process_one(input)?;
         total.stats.merge(&row.stats);
-        rows.push(row);
+
+        if cli.total != TotalWhen::Only {
+            rows.push(row);
+        }
     }
 
-    if multi {
+    if print_total {
         rows.push(total);
     }
 

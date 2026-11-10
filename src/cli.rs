@@ -1,5 +1,5 @@
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use std::{
     option::Option,
     path::{Path, PathBuf},
@@ -7,12 +7,22 @@ use std::{
 
 use crate::Col;
 
+#[derive(ValueEnum, Debug, Clone, PartialEq, Eq)]
+pub enum TotalWhen {
+    Auto,
+    Always,
+    Only,
+    Never,
+}
+
 macro_rules! define_cli {
     (
         $(
             $(#[$meta:meta])*
             $field:ident : $variant:ident : $short:literal / $long:literal
         ),* $(,)?
+        ;
+        $( $extra:tt )*
     ) => {
         #[derive(Parser, Debug)]
         #[command(version, about, long_about = None)]
@@ -22,6 +32,7 @@ macro_rules! define_cli {
                 #[arg(short = $short, long = $long)]
                 pub $field: bool,
             )*
+            $( $extra )*
             #[arg(value_name = "FILE")]
             pub files: Vec<PathBuf>,
         }
@@ -51,6 +62,9 @@ define_cli! {
     bytes: Bytes : 'c' / "bytes",
     // Count line length
     max_line_len: MaxLineLen: 'L' / "max-line-length",
+    ;
+    #[arg(long, value_enum, default_value="auto")]
+    pub total: TotalWhen,
 }
 
 impl Cli {
