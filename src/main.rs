@@ -1,6 +1,5 @@
-mod cli;
 use anyhow::Result;
-use crate::cli::Cli;
+use pwc::cli::Cli;
 
 fn main() -> Result<()> {
     let cli = Cli::parse_args()?;
