@@ -1,8 +1,8 @@
 use anyhow::Result;
 use pwc::cli::Cli;
 use pwc::count::count;
-use pwc::output::{Label, Row, print_results};
-use pwc::stats::Stats;
+use pwc::output::print_results;
+use pwc::{Label, Row, Stats};
 use std::fs::File;
 use std::io;
 use std::path::Path;
@@ -27,8 +27,8 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
 
     for input in inputs {
         let row = process_one(input)?;
-        rows.push(row);
         total.stats.merge(row.stats);
+        rows.push(row);
     }
 
     if multi {

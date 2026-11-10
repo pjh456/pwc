@@ -1,4 +1,4 @@
-use crate::stats::Stats;
+use crate::model::Stats;
 use std::io::{self, BufRead};
 
 pub fn count<R: BufRead>(reader: &mut R) -> io::Result<Stats> {
