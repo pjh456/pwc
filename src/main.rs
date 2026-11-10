@@ -27,7 +27,7 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
 
     for input in inputs {
         let row = process_one(input)?;
-        total.stats.merge(row.stats);
+        total.stats.merge(&row.stats);
         rows.push(row);
     }
 

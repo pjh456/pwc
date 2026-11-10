@@ -1,6 +1,6 @@
 use std::path::Path;
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Default, Clone)]
 pub struct Stats {
     pub lines: u64,
     pub words: u64,
@@ -32,7 +32,7 @@ pub enum Col {
 }
 
 impl Stats {
-    pub fn merge(&mut self, other: Stats) {
+    pub fn merge(&mut self, other: &Stats) {
         self.lines += other.lines;
         self.words += other.words;
         self.chars += other.chars;
