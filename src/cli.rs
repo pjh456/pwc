@@ -5,32 +5,52 @@ use std::{
     path::{Path, PathBuf},
 };
 
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-pub struct Cli {
-    // Count lines of input
-    #[arg(short, long)]
-    pub lines: bool,
+use crate::Col;
 
-    // Count words of input
-    #[arg(short, long)]
-    pub words: bool,
+macro_rules! define_cli {
+    (
+        $(
+            $(#[$meta:meta])*
+            $field:ident : $variant:ident : $short:literal / $long:literal
+        ),* $(,)?
+    ) => {
+        #[derive(Parser, Debug)]
+        #[command(version, about, long_about = None)]
+        pub struct Cli {
+            $(
+                $(#[$meta])*
+                #[arg(short = $short, long = $long)]
+                pub $field: bool,
+            )*
+            #[arg(value_name = "FILE")]
+            pub files: Vec<PathBuf>,
+        }
 
-    // Count characters of input
-    #[arg(short, long)]
-    pub chars: bool,
+        impl Cli {
+            pub fn columns(&self) -> Vec<Col> {
+                let any  = false $(|| self.$field)*;
+                if !any {
+                    return vec![Col::Lines, Col::Words, Col::Bytes];
+                }
+                let mut cols = Vec::new();
+                $(if self.$field { cols.push(Col::$variant); })*
+                cols
+            }
+        }
+    };
+}
 
-    // Count bytes of input
-    #[arg(short, long)]
-    pub bytes: bool,
-
-    // Count max length of line
-    #[arg(short = 'L', long)]
-    pub max_line_len: bool,
-
-    // Input files
-    #[arg(value_name = "FILE")]
-    pub files: Vec<PathBuf>,
+define_cli! {
+    // Count lines
+    lines: Lines: 'l' / "lines",
+    // Count words
+    words: Words: 'w' / "words",
+    // Count characters
+    chars: Chars: 'm' / "chars",
+    // Count bytes
+    bytes: Bytes : 'c' / "bytes",
+    // Count line length
+    max_line_len: MaxLineLen: 'L' / "max-line-length",
 }
 
 impl Cli {

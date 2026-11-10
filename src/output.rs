@@ -1,36 +1,8 @@
 use crate::cli::Cli;
 use crate::{Col, Label, Row, Stats};
 
-fn selected_columns(cli: &Cli) -> Vec<Col> {
-    let not_empty = cli.lines || cli.words || cli.chars || cli.bytes || cli.max_line_len;
-    let (l, w, c, b, m) = if not_empty {
-        (cli.lines, cli.words, cli.chars, cli.bytes, cli.max_line_len)
-    } else {
-        (true, true, false, true, false)
-    };
-
-    let mut cols = Vec::new();
-    if l {
-        cols.push(Col::Lines);
-    }
-    if w {
-        cols.push(Col::Words);
-    }
-    if c {
-        cols.push(Col::Chars);
-    }
-    if b {
-        cols.push(Col::Bytes);
-    }
-    if m {
-        cols.push(Col::MaxLineLen);
-    }
-
-    cols
-}
-
 pub fn print_results(cli: &Cli, rows: &[Row]) {
-    let cols = selected_columns(cli);
+    let cols = cli.columns();
     if cols.is_empty() {
         return;
     }
