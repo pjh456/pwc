@@ -1,6 +1,6 @@
 use crate::Stats;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Col {
     Lines,
     Words,

@@ -2,7 +2,7 @@ use anyhow::Result;
 use pwc::cli::{Cli, TotalWhen};
 use pwc::count::count;
 use pwc::output::print_results;
-use pwc::{Label, Row, Stats};
+use pwc::{Col, Label, Row, Stats};
 use std::fs::File;
 use std::io;
 use std::path::Path;
@@ -31,7 +31,7 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
     };
 
     for input in inputs {
-        let row = process_one(input)?;
+        let row = process_one(input, &cli.columns())?;
         total.stats.merge(&row.stats);
 
         if cli.total != TotalWhen::Only {
@@ -48,13 +48,13 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
     Ok(())
 }
 
-fn process_one<'a>(input: &Option<&'a Path>) -> Result<Row<'a>> {
+fn process_one<'a>(input: &Option<&'a Path>, cols: &[Col]) -> Result<Row<'a>> {
     match input {
         None => {
             let stdin = io::stdin();
             let mut lock = stdin.lock();
             Ok(Row {
-                stats: count(&mut lock)?,
+                stats: count(&mut lock, cols)?,
                 label: Label::Stdin,
             })
         }
@@ -62,7 +62,7 @@ fn process_one<'a>(input: &Option<&'a Path>) -> Result<Row<'a>> {
             let file = File::open(path)?;
             let mut reader = io::BufReader::new(file);
             Ok(Row {
-                stats: count(&mut reader)?,
+                stats: count(&mut reader, cols)?,
                 label: Label::File(path),
             })
         }
