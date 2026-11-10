@@ -1,5 +1,6 @@
 pub mod cli;
 pub mod count;
+pub mod input;
 pub mod model;
 pub mod output;
 

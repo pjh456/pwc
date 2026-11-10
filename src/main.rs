@@ -1,10 +1,9 @@
 use anyhow::Result;
 use pwc::cli::{Cli, TotalWhen};
 use pwc::count::count;
+use pwc::input::Input;
 use pwc::output::print_results;
 use pwc::{Col, Label, Row, Stats};
-use std::fs::File;
-use std::io;
 use std::path::Path;
 
 fn main() -> Result<()> {
@@ -49,22 +48,13 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
 }
 
 fn process_one<'a>(input: &Option<&'a Path>, cols: &[Col]) -> Result<Row<'a>> {
-    match input {
-        None => {
-            let stdin = io::stdin();
-            let mut lock = stdin.lock();
-            Ok(Row {
-                stats: count(&mut lock, cols)?,
-                label: Label::Stdin,
-            })
-        }
-        Some(path) => {
-            let file = File::open(path)?;
-            let mut reader = io::BufReader::new(file);
-            Ok(Row {
-                stats: count(&mut reader, cols)?,
-                label: Label::File(path),
-            })
-        }
-    }
+    let mut inner = Input::open(*input)?;
+
+    Ok(Row {
+        stats: count(&mut inner, cols)?,
+        label: match &input {
+            Some(p) => Label::File(p),
+            None => Label::Stdin,
+        },
+    })
 }
