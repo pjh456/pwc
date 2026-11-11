@@ -9,7 +9,11 @@ use crate::count::WordAccumulator;
 use std::option::Option;
 
 pub trait Accumulator {
+    /// Can be called in any situation,
+    /// including empty, corssing lines, cutting UTF-8 code point inputs.
+    /// Must reserve pending character.
     fn feed(&mut self, buf: &[u8]);
+    /// Pending character is counted too.
     fn count(&self) -> u64;
 }
 

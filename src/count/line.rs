@@ -6,8 +6,8 @@ pub(crate) struct LineAccumulator {
 }
 
 impl Accumulator for LineAccumulator {
-    fn feed(&mut self, _buf: &[u8]) {
-        self.counts += 1;
+    fn feed(&mut self, buf: &[u8]) {
+        self.counts += buf.iter().filter(|&&b| b == b'\n').count() as u64;
     }
     fn count(&self) -> u64 {
         self.counts
