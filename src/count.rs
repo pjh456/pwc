@@ -6,6 +6,9 @@ mod max_len;
 mod utf8;
 mod word;
 
+#[cfg(test)]
+mod tests;
+
 use accumulator::Accumulator;
 use byte::ByteAccumulator;
 use char::CharAccumulator;
