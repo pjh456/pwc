@@ -16,7 +16,7 @@ impl Col {
             Col::Words => stats.words,
             Col::Chars => stats.chars,
             Col::Bytes => stats.bytes,
-            Col::MaxLineLen => stats.max_line_len as u64,
+            Col::MaxLineLen => stats.max_line_len,
         }
     }
 }

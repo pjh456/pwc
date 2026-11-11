@@ -27,7 +27,7 @@ pub fn count(inputs: &mut Input, cols: &[Col]) -> io::Result<Stats> {
     let mut accs = Accumulators::new(cols);
 
     inputs.process(&mut |chunk| {
-        accs.feed_all(&chunk);
+        accs.feed_all(chunk);
     })?;
 
     Ok(accs.to_stats())

@@ -42,7 +42,7 @@ fn process_all(cli: &Cli, inputs: &[Option<&Path>]) -> Result<()> {
         rows.push(total);
     }
 
-    print_results(&cli, &rows);
+    print_results(cli, &rows);
 
     Ok(())
 }
