@@ -7,6 +7,9 @@ use std::{
 
 use crate::Col;
 
+#[cfg(test)]
+mod tests;
+
 #[derive(ValueEnum, Debug, Clone, PartialEq, Eq)]
 pub enum TotalWhen {
     Auto,
