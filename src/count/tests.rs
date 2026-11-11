@@ -1,1 +1,9 @@
+mod accumulator;
+mod byte;
+mod char;
+mod count;
+mod line;
+mod max_len;
+mod support;
 mod utf8;
+mod word;
