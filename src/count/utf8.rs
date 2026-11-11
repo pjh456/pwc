@@ -15,23 +15,24 @@ impl Utf8Carry {
     {
         let mut rest = chunk;
 
-        if self.len > 0 {
+        while self.len > 0 && !rest.is_empty() {
             let take = (4 - self.len).min(rest.len());
             self.concat_with(&rest[..take]);
+            rest = &rest[take..];
 
             let total = self.len;
             let buf = self.carry;
             let consumed = Utf8Carry::decode(&buf[..total], f);
 
-            // still incompleted
-            if consumed < total {
-                debug_assert_eq!(take, rest.len());
+            if consumed == total {
+                self.len = 0;
+            } else {
                 self.update_carry_tail(&buf[consumed..total]);
-                return;
             }
+        }
 
-            self.len = 0;
-            rest = &rest[take..];
+        if rest.is_empty() {
+            return;
         }
 
         let consumed = Utf8Carry::decode(rest, f);
